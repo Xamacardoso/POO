@@ -37,7 +37,7 @@ A classe é um tipo abstrato de dados que possui características (atributos) e 
 	R: Sim, isso seria essencial para identificar o possuidor da conta. Desse modo, é possível buscar com mais facilidade a informação de uma pessoa específica.
 
 - b) Olhando no sentido inverso, seria interessante uma pessoa possuir mais de uma conta como atributo? Que elemento da programação estruturada melhor representaria o conjunto de contas de uma pessoa?
-	R: Sim, pois a pessoa pode possuir mais de um tipo de conta no mesmo banco. A melhor forma seria armazená-lo em um HashMap (dicionário) a fim de facilitar a 
+	R: Sim, pois a pessoa pode possuir mais de um tipo de conta no mesmo banco. A melhor forma seria armazená-lo em um HashMap (dicionário) a fim de facilitar a busca, modificação e exclusão delas
 # Questão 5
 
 * Aluno

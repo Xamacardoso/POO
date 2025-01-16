@@ -1,62 +1,45 @@
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Banco = exports.Cliente = exports.Conta = void 0;
 class Conta {
-    id: number;
-    numero: string;
-    saldo: number;
-    cliente!: Cliente;
-
-    constructor(numero: string, saldo: number) {
+    constructor(numero, saldo) {
         this.id = 0;
         this.numero = numero;
         this.saldo = saldo;
-        
     }
-
-    sacar(valor: number): void {
+    sacar(valor) {
         this.saldo = this.saldo - valor;
     }
-
-    depositar(valor: number): void {
+    depositar(valor) {
         this.saldo = this.saldo + valor;
     }
-
-    consultarSaldo(): number {
-        return this.saldo
+    consultarSaldo() {
+        return this.saldo;
     }
-
-    transferir(contaDestino: Conta, valor: number): void {
+    transferir(contaDestino, valor) {
         // this.saldo = this.saldo - valor;
         // contaDestino.saldo = contaDestino.saldo + valor;
-
         this.sacar(valor);
         contaDestino.depositar(valor);
     }
 }
-
+exports.Conta = Conta;
 class Cliente {
-    id: number;
-    nome: string;
-    cpf: string;
-    dataNascimento: Date;
-    contas: Conta[];
-
-    constructor(nome: string, cpf: string, dataNascimento: Date) {
+    constructor(nome, cpf, dataNascimento) {
         this.id = 0;
         this.nome = nome;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.contas = [];
     }
-
-    removerConta(numConta: string): void {  
-        let indiceProcurado: number = -1;
+    removerConta(numConta) {
+        let indiceProcurado = -1;
         for (let i = 0; i < this.contas.length; i++) {
             if (this.contas[i].numero == numConta) {
                 indiceProcurado = i;
                 break;
             }
         }
-
         if (indiceProcurado != -1) {
             for (let i = indiceProcurado; i < this.contas.length - 1; i++) {
                 this.contas[i] = this.contas[i + 1];
@@ -64,58 +47,42 @@ class Cliente {
             this.contas.pop();
         }
     }
-
 }
-
+exports.Cliente = Cliente;
 class Banco {
-    contas: Conta[];
-    clientes: Cliente[];
-    idClienteAtual: number;
-    idContaAtual: number;
-
     constructor() {
         this.contas = [];
         this.clientes = [];
         this.idClienteAtual = 1;
         this.idContaAtual = 1;
     }
-
-    inserirConta(conta: Conta) {
+    inserirConta(conta) {
         conta.id = this.idContaAtual++;
         this.contas.push(conta);
     }
-
-    consultarConta(numero: string): Conta {
-        let contaProcurada!: Conta;
-
+    consultarConta(numero) {
+        let contaProcurada;
         for (let conta of this.contas) {
-            if (conta.numero == numero ) {
+            if (conta.numero == numero) {
                 contaProcurada = conta;
                 break;
             }
         }
-
         return contaProcurada;
     }
-
-    consultarContaPorIndice(numero: string): number {
-        let indiceProcurado: number = -1;
-
+    consultarContaPorIndice(numero) {
+        let indiceProcurado = -1;
         for (let i = 0; i < this.contas.length; i++) {
             if (this.contas[i].numero == numero) {
                 indiceProcurado = i;
                 break;
             }
         }
-
         return indiceProcurado;
     }
-
     // Refatorado
-    excluirConta(numero: string): void {
-        let indiceProcurado: number =
-            this.consultarContaPorIndice(numero);
-        
+    excluirConta(numero) {
+        let indiceProcurado = this.consultarContaPorIndice(numero);
         if (indiceProcurado != -1) {
             this.contas[indiceProcurado].cliente.removerConta(numero); // Remove a conta entre as contas do cliente
             for (let i = indiceProcurado; i < this.contas.length - 1; i++) {
@@ -124,23 +91,18 @@ class Banco {
             this.contas.pop();
         }
     }
-
-    alterar(conta: Conta): void {
-        let contaProcurada: Conta = this.consultarConta(conta.numero);
-
+    alterar(conta) {
+        let contaProcurada = this.consultarConta(conta.numero);
         if (contaProcurada) {
             contaProcurada = conta;
         }
     }
-
-    inserirCliente(cliente: Cliente): void {
-        cliente.id = this.idClienteAtual++
+    inserirCliente(cliente) {
+        cliente.id = this.idClienteAtual++;
         this.clientes.push(cliente);
     }
-
-    consultarCliente(cpf: string): Cliente {
-        let clienteProcurado!: Cliente;
-
+    consultarCliente(cpf) {
+        let clienteProcurado;
         for (let cliente of this.clientes) {
             if (cliente.cpf == cpf) {
                 clienteProcurado = cliente;
@@ -148,15 +110,12 @@ class Banco {
         }
         return clienteProcurado;
     }
-
-    excluirCliente(cpfCliente: string): void {
-        let clienteProcurado: Cliente = this.consultarCliente(cpfCliente);
-
+    excluirCliente(cpfCliente) {
+        let clienteProcurado = this.consultarCliente(cpfCliente);
         if (!clienteProcurado) {
             console.log("Cliente nao encontrado.");
             return;
         }
-
         for (let i = 0; i < this.clientes.length; i++) {
             if (this.clientes[i].cpf === cpfCliente) {
                 // Remove o cliente da lista de clientes do banco
@@ -168,50 +127,40 @@ class Banco {
             }
         }
     }
-
-    sacar(numero: string, valor: number): void {
-        let contaProcurada: Conta = this.consultarConta(numero);
-
+    sacar(numero, valor) {
+        let contaProcurada = this.consultarConta(numero);
         if (contaProcurada) {
             contaProcurada.sacar(valor);
         }
     }
-
-    depositar(numero: string, valor: number): void {
-        let contaProcurada: Conta = this.consultarConta(numero);
-
+    depositar(numero, valor) {
+        let contaProcurada = this.consultarConta(numero);
         if (contaProcurada) {
             contaProcurada.depositar(valor);
         }
     }
-
-    transferir(numeroOrigem: string, numeroDestino: string, valor: number): void {
-        let contaOrigem: Conta = this.consultarConta(numeroOrigem);
-        let contaDestino: Conta = this.consultarConta(numeroDestino);
-
+    transferir(numeroOrigem, numeroDestino, valor) {
+        let contaOrigem = this.consultarConta(numeroOrigem);
+        let contaDestino = this.consultarConta(numeroDestino);
         if (contaOrigem && contaDestino) {
             contaOrigem.transferir(contaDestino, valor);
         }
     }
-
-
-    associarContaCliente(numeroConta: string, cpfCliente: string): void {
-        let contaProcurada: Conta = this.consultarConta(numeroConta);
-        let clienteProcurado: Cliente = this.consultarCliente(cpfCliente);
-
+    associarContaCliente(numeroConta, cpfCliente) {
+        let contaProcurada = this.consultarConta(numeroConta);
+        let clienteProcurado = this.consultarCliente(cpfCliente);
         if (contaProcurada && clienteProcurado && !contaProcurada.cliente) {
             contaProcurada.cliente = clienteProcurado;
             clienteProcurado.contas.push(contaProcurada);
         }
     }
-
-    jaExisteContaParaCliente(cliente: Cliente, conta: Conta): boolean {
-        let jaExiste: boolean = false;
-
+    jaExisteContaParaCliente(cliente, conta) {
+        let jaExiste = false;
         if (conta.cliente != null) {
             if (conta.cliente.cpf == cliente.cpf) {
                 jaExiste = true;
-            } else {
+            }
+            else {
                 for (let contaAssociada of cliente.contas) {
                     if (contaAssociada.numero == conta.numero) {
                         jaExiste = true;
@@ -219,102 +168,79 @@ class Banco {
                 }
             }
         }
-
         return jaExiste;
     }
-
-    listarContasCliente(cpf: string): Conta[] {
-        let clienteProcurado: Cliente = this.consultarCliente(cpf);
-        let contas: Conta[] = [];
-
+    listarContasCliente(cpf) {
+        let clienteProcurado = this.consultarCliente(cpf);
+        let contas = [];
         if (clienteProcurado) {
             contas = clienteProcurado.contas;
         }
         return contas;
     }
-
-    totalizarSaldoCliente(cpf: string): number {
-        let clienteProcurado: Cliente = this.consultarCliente(cpf);
-        let total: number = 0;
+    totalizarSaldoCliente(cpf) {
+        let clienteProcurado = this.consultarCliente(cpf);
+        let total = 0;
         if (clienteProcurado) {
             for (let conta of clienteProcurado.contas) {
-                total += conta.saldo
+                total += conta.saldo;
             }
         }
-
         return total;
     }
-
-
-    obterQuantidadeDeContas(): number {
+    obterQuantidadeDeContas() {
         return this.contas.length;
     }
-
-
-    obterTotalDinheiroDepositado(): number {
-        let total: number = 0;
-
+    obterTotalDinheiroDepositado() {
+        let total = 0;
         for (let conta of this.contas) {
             total = total + conta.saldo;
         }
-        return total ;
+        return total;
     }
-
-
-    calcularMediaSaldoContas(): number {
-        return this.obterTotalDinheiroDepositado()/this.obterQuantidadeDeContas();
+    calcularMediaSaldoContas() {
+        return this.obterTotalDinheiroDepositado() / this.obterQuantidadeDeContas();
     }
-
-    mudarTitularidadeConta(numeroConta: string, cpfNovoTitular: string): void {
-        let contaProcurada: Conta = this.consultarConta(numeroConta);
-        let clienteProcurado: Cliente = this.consultarCliente(cpfNovoTitular);
-
+    mudarTitularidadeConta(numeroConta, cpfNovoTitular) {
+        let contaProcurada = this.consultarConta(numeroConta);
+        let clienteProcurado = this.consultarCliente(cpfNovoTitular);
         if (!contaProcurada || !clienteProcurado) {
             console.log("Conta ou cliente nao encontrados.");
             return;
         }
-        
         if (this.jaExisteContaParaCliente(clienteProcurado, contaProcurada)) {
             console.log("Conta ja associada a esse mesmo cliente.");
             return;
         }
-        
         // Remove essa conta da lista de conta do cliente antigo
         for (let conta of contaProcurada.cliente.contas) {
             if (conta.numero == contaProcurada.numero) {
                 // Percorre a lista de contas do cliente antigo e remove a selecionada
-                for (let i = contaProcurada.cliente.contas.indexOf(conta);
-                i < contaProcurada.cliente.contas.length - 1; i++) {
+                for (let i = contaProcurada.cliente.contas.indexOf(conta); i < contaProcurada.cliente.contas.length - 1; i++) {
                     contaProcurada.cliente.contas[i] = contaProcurada.cliente.contas[i + 1];
                 }
                 contaProcurada.cliente.contas.pop();
             }
         }
-
         // Adiciona a conta ao outro cliente
         contaProcurada.cliente = clienteProcurado;
         clienteProcurado.contas.push(contaProcurada);
     }
-
-    obterContasSemCliente(): Conta[] {
-        let contasSemCliente: Conta[] = [];
-
+    obterContasSemCliente() {
+        let contasSemCliente = [];
         for (let conta of this.contas) {
             if (!conta.cliente) {
-                contasSemCliente.push(conta);            
+                contasSemCliente.push(conta);
             }
         }
-
         return contasSemCliente;
     }
-
-    ordemBancaria(contaOrigem: string, contasDestino: string[], valorTransf: number): void {
-        let contaOrigemProcurada: Conta = this.consultarConta(contaOrigem);
+    ordemBancaria(contaOrigem, contasDestino, valorTransf) {
+        let contaOrigemProcurada = this.consultarConta(contaOrigem);
         if (!contaOrigemProcurada) {
             console.log("Conta de origem nao encontrada");
             return;
         }
-        
         // Verifica se todas as contas de destino existem
         for (let contaDestino of contasDestino) {
             if (!this.consultarConta(contaDestino)) {
@@ -323,20 +249,15 @@ class Banco {
                 return;
             }
         }
-
         // Verifica se a conta de origem possui saldo suficiente para realizar a transferência para todas as contas
-        if (contaOrigemProcurada.saldo < valorTransf*contasDestino.length) {
+        if (contaOrigemProcurada.saldo < valorTransf * contasDestino.length) {
             console.log(`A conta ${contaOrigemProcurada.numero} possui saldo insuficiente para realizar a ordem bancária...`);
             return;
         }
-
         for (let contaDestino of contasDestino) {
             this.transferir(contaOrigem, contaDestino, valorTransf);
         }
-
         console.log("Ordem bancária realizada com sucesso!");
     }
 }
-
-
-export {Conta, Cliente, Banco}
+exports.Banco = Banco;

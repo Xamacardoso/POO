@@ -1,14 +1,18 @@
 import { Banco, Conta, Cliente } from "./banco";
+import { ContaImposto } from "./contaImposto";
+import { Poupanca } from "./poupanca";
 import prompt from "prompt-sync";
+import * as fs from "fs";
 
-// Ultimo passo: Refatoração do aplicativo em uma classe
+
 class Aplicativo {
-    banco: Banco;
+    private banco: Banco;
     input = prompt();
     opcao!: string;
 
     constructor() {
         this.banco = new Banco();
+        this.obterContasDeArquivo("contas.txt");
     }
 
     exibirMenu() : void{
@@ -22,16 +26,71 @@ class Aplicativo {
         console.log('11 - Total aplicado por cliente   12 - Mudar titularidade');
         console.log('13 - Excluir Cliente');
         console.log('\nExtras:');
-        console.log('14 - Exibir contas sem cliente  15 - Ordem bancária');
+        console.log('14 - Exibir contas sem cliente  15 - Ordem bancária  16 - Render juros');
         
         console.log('0 - Sair');
     }
 
     inserirConta() : void{
         const numero = this.input('Digite o numero da conta: ');
-        const titular = this.input('Digite o titular da conta: ');
         const saldo = parseFloat(this.input('Digite o saldo da conta: '));
-        this.banco.inserirConta(new Conta(numero, saldo));
+        const tipoConta = this.input('Digite o tipo da conta (C - Conta Comum, CP - Poupança, CI - Conta Imposto): ');
+        
+        let conta: Conta = this.processarTipoConta(numero, saldo, tipoConta);
+        
+        this.banco.inserirConta(conta);
+    }
+
+    public processarTipoConta(numero: string, saldo: number, tipoConta: string): Conta {
+        let conta: Conta;
+        
+        if (tipoConta == 'CP') {
+            const taxaJuros = parseFloat(this.input('Digite a taxa de juros da poupança: '));
+            conta = new Poupanca(numero, saldo, taxaJuros);
+        } else if (tipoConta == 'CI') {
+            conta = new ContaImposto(numero, saldo);
+        } else {
+            conta = new Conta(numero, saldo);
+        }
+        
+        return conta;
+    }
+
+    public obterContasDeArquivo(caminhoArquivo: string): void {
+        const contas: Conta[] = [];
+        
+        try {
+            const arquivo = fs.readFileSync(caminhoArquivo, "utf-8");
+            const linhas = arquivo.split("\n");
+            
+            let conta: Conta;
+
+            for (let i = 1; i < linhas.length; i++) {
+                const campos = linhas[i].split(";");
+                const numero = campos[0];
+                const saldo = parseFloat(campos[1]);
+                const tipo = campos[2];
+                
+                switch (tipo) {
+                    case 'C':
+                        contas.push(new Conta(numero, saldo));
+                        break;
+                    case 'CP':
+                        const taxaJuros = parseFloat(campos[3]);
+                        contas.push(new Poupanca(numero, saldo,taxaJuros));
+                        break;
+                    case 'CI':
+                        contas.push(new ContaImposto(numero, saldo));
+                        break;
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao ler o arquivo:", error);
+        }
+        
+        for (const conta of contas) {
+            this.banco.inserirConta(conta);
+        }
     }
 
     consultarConta() : void{
@@ -140,6 +199,11 @@ class Aplicativo {
         this.banco.ordemBancaria(contaOrigem, contasDestino, valorTransf);
     }
 
+    renderJuros() : void{
+        const numConta: string = this.input('Digite o numero da conta: ');
+        this.banco.renderJuros(numConta);
+    }
+
     executar() : void{
         do {
             this.exibirMenu();
@@ -160,6 +224,7 @@ class Aplicativo {
                 case '13': this.excluirCliente(); break;
                 case '14': this.exibirContasSemCliente(); break;
                 case '15': this.ordemBancaria(); break;
+                case '16': this.renderJuros(); break;
                 case '0': break;
                 default:
                     console.log("Opção inválida!");
@@ -169,3 +234,6 @@ class Aplicativo {
         } while (this.opcao != '0');
     }
 }
+
+let app: Aplicativo = new Aplicativo();
+app.executar();

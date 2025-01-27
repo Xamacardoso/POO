@@ -1,0 +1,21 @@
+1) Conta e Cliente possuem o id passados no construtor, 
+   bem como todos os campos têm os métodos de leitura
+
+2) Os métodos setId foram retirados   
+
+3) A conta imposto também tem a taxaDeImposto no construtor e seu respectivo
+   método de leitura para o atributo id
+
+4) O id, provisoriamente, está sendo fornecido pelo usuário. Isso não é legal. O ideal é que ele seja atribuído automaticamente 
+   como antes.
+
+5) Existe na classe Banco o método get do array de contas. O ideal é criar uma cópia "de leitura" como fizemos no método Cliente.listarCopiaContas() criando um método Banco.listarCopiaContas()
+
+6) A taxaDeImposto da ContaImposto é fornecida pelo usuário ao optar
+   por uma conta em que incide imposto ao realizar débito.
+
+7) O modelo de arquivo trás mais um campo, o cpf do cliente e também adota o padrão brasileiro de exibição de datas.   
+8) A implementação não é normalizada para o cliente. Ou seja. O cliente se repete a cada
+   nova associação com conta. A solução ideal era ter 2 arquivos: contas.txt e clientes.txt  
+
+9) O formato do arquivo não é validado. Caso não esteja no padrão que o app precisa, haverá um problema na leitura do arquivo.    
